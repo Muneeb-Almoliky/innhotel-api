@@ -2,7 +2,7 @@
 
 public class CreateReservationRequest
 {
-  public const string Route = "api/reservations";
+  public const string Route = "reservations";
 
   public int GuestId { get; set; }
   public DateTime CheckInDate { get; set; }
