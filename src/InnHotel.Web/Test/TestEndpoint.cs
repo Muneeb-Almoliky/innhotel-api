@@ -5,7 +5,7 @@ public class TestEndpoint : Endpoint<EmptyRequest, TestResponse>
 {
   public override void Configure()
   {
-    Get("/api/test");
+    Get("test");
     Description(b => b
         .Produces<TestResponse>(200)
         .ProducesProblemDetails(500));

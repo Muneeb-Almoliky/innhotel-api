@@ -4,7 +4,7 @@ namespace InnHotel.Web.Employees;
 
 public class CreateEmployeeRequest
 {
-    public const string Route = "api/Employees";
+    public const string Route = "Employees";
 
     [Required]
     public int BranchId { get; set; }

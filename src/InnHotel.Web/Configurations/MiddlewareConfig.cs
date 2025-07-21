@@ -20,7 +20,7 @@ public static class MiddlewareConfig
     }
 
     // wire up FastEndpoints + Swagger/static files
-    app.UseFastEndpoints()
+    app.UseFastEndpoints(c =>   c.Endpoints.RoutePrefix = "api") // set a global prefix for all endpoints
        .UseSwaggerGen();
 
     app.UseHttpsRedirection();
