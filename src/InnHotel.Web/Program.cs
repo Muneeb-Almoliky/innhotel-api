@@ -28,14 +28,20 @@ builder.Host.UseSerilog();
 var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection");
 ValidateDatabaseConnection(connectionString);
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(connectionString, npgsql =>
+        npgsql.EnableRetryOnFailure()
+    )
+);
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
 builder.Services.AddAuthorization(options =>
 {
-   options.AddPolicy("AdminsOnly", policy =>
-   policy.RequireRole(Roles.Admin, Roles.SuperAdmin));
+  options.AddPolicy("AdminsOnly", policy =>
+  policy.RequireRole(Roles.Admin, Roles.SuperAdmin));
 });
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -49,55 +55,55 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.SaveToken = true;
-    options.RequireHttpsMetadata = false;
-    options.TokenValidationParameters = new TokenValidationParameters
+  options.SaveToken = true;
+  options.RequireHttpsMetadata = false;
+  options.TokenValidationParameters = new TokenValidationParameters
+  {
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidIssuer = jwtSettings["Issuer"],
+    ValidAudience = jwtSettings["Audience"],
+    ClockSkew = TimeSpan.Zero
+  };
+
+  options.Events = new JwtBearerEvents
+  {
+    OnChallenge = context =>
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        ClockSkew = TimeSpan.Zero
-    };
+      context.HandleResponse();
 
-    options.Events = new JwtBearerEvents
-    {
-        OnChallenge = context =>
-        {
-            context.HandleResponse();
+      context.Response.StatusCode = 401;
+      context.Response.ContentType = "application/json";
 
-            context.Response.StatusCode = 401;
-            context.Response.ContentType = "application/json";
+      var error = new FailureResponse(
+          401,
+          "Unauthorized: authentication is required."
+      );
 
-            var error = new FailureResponse(
-                401,
-                "Unauthorized: authentication is required."
-            );
-
-            return context.Response.WriteAsJsonAsync(error);
-        }
-    };
+      return context.Response.WriteAsJsonAsync(error);
+    }
+  };
 });
-builder.Services.AddAuthentication(); 
+builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
 // CORS configuration
-var allowedOriginsEnv = DotNetEnv.Env.GetString("ALLOWED_ORIGINS") 
+var allowedOriginsEnv = DotNetEnv.Env.GetString("ALLOWED_ORIGINS")
     ?? throw new InvalidOperationException("ALLOWED_ORIGINS environment variable is required");
 var allowedOrigins = allowedOriginsEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.SetIsOriginAllowed(origin => allowedOrigins.Contains(origin))
-               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
-               .WithHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With", "Cookie")
-               .WithExposedHeaders("Content-Disposition", "Set-Cookie")
-               .AllowCredentials();
-    });
+  options.AddDefaultPolicy(builder =>
+  {
+    builder.SetIsOriginAllowed(origin => allowedOrigins.Contains(origin))
+           .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+           .WithHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With", "Cookie")
+           .WithExposedHeaders("Content-Disposition", "Set-Cookie")
+           .AllowCredentials();
+  });
 });
 
 // Dependency Injection configuration
@@ -105,11 +111,7 @@ ConfigureServices(builder);
 
 var app = builder.Build();
 
-app.UsePathBase("/api");
-// app.UseRouting();
 app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Application startup configuration
 await ConfigureApplication(app);
@@ -148,8 +150,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
       .AddFastEndpoints()
       .SwaggerDocument(o => {
         o.ShortSchemaNames = true;
-        o.AutoTagPathSegmentIndex = 2;
-        });
+        //o.AutoTagPathSegmentIndex = 2;
+      });
 }
 
 static async Task ConfigureApplication(WebApplication app)

@@ -11,7 +11,7 @@
 |   dotnet script ./scripts/gen-list-operation.csx -- --entity Branch --plural Branches
 |
 | For detailed documentation, see:
-|   docs/dev/list-operation.md
+|   docs/dev/gen-operation-scripts.md
 |
 */
 

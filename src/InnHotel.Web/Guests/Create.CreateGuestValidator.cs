@@ -1,6 +1,6 @@
 ﻿using Ardalis.SharedKernel;
 using FluentValidation;
-using InnHotel.Core.GuestAggregate;
+using InnHotel.Core.GuestAggregate.ValueObjects;
 
 namespace InnHotel.Web.Guests;
 
@@ -19,8 +19,16 @@ public class CreateGuestValidator : Validator<CreateGuestRequest>
         .NotEmpty().WithMessage("Last name is required.")
         .MaximumLength(50);
 
+    RuleFor(x => x.Gender)
+        .NotEmpty().WithMessage("Gender is required.")
+        .Must(gender => Enum.TryParse<Gender>(gender, true, out _))
+        .WithMessage("Invalid gender value.")
+        .MaximumLength(20);
+
     RuleFor(x => x.IdProofType)
         .NotEmpty().WithMessage("ID proof type is required.")
+        .Must(id => Enum.TryParse<IdProofType>(id, true, out _))
+        .WithMessage("Invalid ID proof type value.")
         .MaximumLength(50);
 
     RuleFor(x => x.IdProofNumber)
@@ -37,6 +45,5 @@ public class CreateGuestValidator : Validator<CreateGuestRequest>
 
     RuleFor(x => x.Address)
         .MaximumLength(500);
-
   }
 }

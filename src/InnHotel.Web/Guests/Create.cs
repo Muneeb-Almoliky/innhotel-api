@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result.AspNetCore;
 using InnHotel.UseCases.Guests.Create;
+using InnHotel.Core.GuestAggregate.ValueObjects; // للوصول إلى Gender و IdProofType enums
 
 namespace InnHotel.Web.Guests;
 
@@ -14,13 +15,11 @@ public class Create(IMediator _mediator)
     Post(CreateGuestRequest.Route);
     Summary(s =>
     {
-      // XML Docs are used by default but are overridden by these properties:
-      // s.Summary = "Create a new Guest.";
-      // s.Description = "Provide required ID proofs and optional contact info.";
       s.ExampleRequest = new CreateGuestRequest
       {
         FirstName = "Jane",
         LastName = "Doe",
+        Gender = "Female",
         IdProofType = "Passport",
         IdProofNumber = "X1234567",
         Email = "jane.doe@example.com",
@@ -34,27 +33,44 @@ public class Create(IMediator _mediator)
     CreateGuestRequest request,
     CancellationToken cancellationToken)
   {
-    // Invoke the CreateGuestCommand via MediatR
-    var result = await _mediator.Send(
-      new CreateGuestCommand(
-        request.FirstName!,
-        request.LastName!,
-        request.IdProofType!,
-        request.IdProofNumber!,
-        request.Email,
-        request.Phone,
-        request.Address
-      ),
-      cancellationToken
+    // ✅ تحويل النصوص إلى enum مع التحقق
+    if (!Enum.TryParse<Gender>(request.Gender, ignoreCase: true, out var gender))
+    {
+      AddError("Invalid gender value.");
+      await SendErrorsAsync();
+      return;
+    }
+
+    if (!Enum.TryParse<IdProofType>(request.IdProofType, ignoreCase: true, out var idProofType))
+    {
+      AddError("Invalid ID proof type value.");
+      await SendErrorsAsync();
+      return;
+    }
+
+    // ✅ إرسال الأمر باستخدام القيم النصية الأصلية (لأن command مازال يستقبل string)
+    var command = new CreateGuestCommand(
+      request.FirstName!,
+      request.LastName!,
+      request.Gender!,
+      request.IdProofType!,
+      request.IdProofNumber!,
+      request.Email,
+      request.Phone,
+      request.Address
     );
+
+    var result = await _mediator.Send(command, cancellationToken);
 
     if (result.IsSuccess)
     {
+      // ✅ إعادة بناء الرد باستخدام القيم المحوّلة
       Response = new CreateGuestResponse(
         result.Value,
         request.FirstName!,
         request.LastName!,
-        request.IdProofType!,
+        gender,
+        idProofType,
         request.IdProofNumber!,
         request.Email,
         request.Phone,
@@ -63,7 +79,6 @@ public class Create(IMediator _mediator)
       return;
     }
 
-    // TODO: handle failure cases (e.g. validation errors)
     await SendResultAsync(result.ToMinimalApiResult());
   }
 }

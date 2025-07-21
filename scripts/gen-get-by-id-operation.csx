@@ -11,7 +11,7 @@
 |   dotnet script ./scripts/gen-get-by-id-operation.csx -- --entity Room --plural Rooms
 |
 | For detailed documentation, see:
-|   docs/dev/get-by-id-operation.md
+|   docs/dev/gen-operation-scripts.md
 |
 */
 

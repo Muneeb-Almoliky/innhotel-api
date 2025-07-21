@@ -1,5 +1,6 @@
 ﻿using InnHotel.UseCases.Guests.Get;
 using InnHotel.Web.Common;
+using InnHotel.Core.GuestAggregate.ValueObjects;
 
 namespace InnHotel.Web.Guests;
 
@@ -15,29 +16,53 @@ public class GetById(IMediator _mediator)
   public override void Configure()
   {
     Get(GetGuestByIdRequest.Route);
+    Summary(s =>
+    {
+      s.Summary = "Get Guest by ID";
+      s.Description = "Returns a guest record matching the provided ID if found";
+    });
   }
 
-  public override async Task HandleAsync(GetGuestByIdRequest request,
-    CancellationToken cancellationToken)
+  public override async Task HandleAsync(GetGuestByIdRequest request, CancellationToken cancellationToken)
   {
     var query = new GetGuestQuery(request.GuestId);
-
     var result = await _mediator.Send(query, cancellationToken);
 
     if (result.Status == ResultStatus.NotFound)
     {
-      var error = new FailureResponse(404, $"Guest with ID {request.GuestId} not found");
-      await SendAsync(error, statusCode: 404, cancellation: cancellationToken);
+      await SendAsync(
+        new FailureResponse(404, $"Guest with ID {request.GuestId} not found"),
+        statusCode: 404,
+        cancellation: cancellationToken
+      );
       return;
     }
 
     if (result.IsSuccess)
     {
-      Response = new GuestRecord(result.Value.Id, result.Value.FirstName, result.Value.LastName, result.Value.IdProofType, result.Value.IdProofNumber, result.Value.Email, result.Value.Phone, result.Value.Address);
-      await SendOkAsync(Response, cancellationToken);
+      var guest = result.Value;
+
+      var guestRecord = new GuestRecord(
+    guest.Id,
+    guest.FirstName,
+    guest.LastName,
+    guest.Gender, // بدون ToString()
+    guest.IdProofType,
+    guest.IdProofNumber,
+    guest.Email,
+    guest.Phone,
+    guest.Address
+);
+
+
+      await SendOkAsync(guestRecord, cancellationToken);
       return;
     }
 
-    await SendAsync(new FailureResponse(500, "An unexpected error occurred."), statusCode: 500, cancellation: cancellationToken);
+    await SendAsync(
+      new FailureResponse(500, "An unexpected error occurred."),
+      statusCode: 500,
+      cancellation: cancellationToken
+    );
   }
 }

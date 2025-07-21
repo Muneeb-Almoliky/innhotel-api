@@ -2,7 +2,7 @@ namespace InnHotel.Web.Rooms;
 
 public class UpdateRoomRequest
 {
-    public const string Route = "api/Rooms/{RoomId:int}";
+    public const string Route = "/Rooms/{RoomId:int}";
     public static string BuildRoute(int roomId) => Route.Replace("{RoomId:int}", roomId.ToString());
 
     public int RoomId { get; set; }

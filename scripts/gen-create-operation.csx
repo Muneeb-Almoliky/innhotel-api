@@ -11,7 +11,7 @@
 |   dotnet script ./scripts/gen-create-operation.csx -- --entity Branch --plural Branches
 |
 | For detailed documentation, see:
-|   docs/dev/create-operation.md
+|   docs/dev/gen-operation-scripts.md
 |
 */
 

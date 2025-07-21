@@ -15,7 +15,7 @@
 |   src/InnHotel.Infrastructure/InfrastructureServiceExtensions.cs
 |
 | For detailed documentation, see:
-|   docs/dev/create-operation.md
+|   docs/dev/gen-operation-scripts.md
 |
 */
 

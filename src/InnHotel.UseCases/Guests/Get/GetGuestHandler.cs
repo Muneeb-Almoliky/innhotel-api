@@ -21,13 +21,14 @@ public class GetGuestHandler(IReadRepository<Guest> _repository)
     if (entity == null) return Result.NotFound();
 
     return new GuestDTO(
-                entity.Id,
-                entity.FirstName,
-                entity.LastName,
-                entity.IdProofType,
-                entity.IdProofNumber,
-                entity.Email,
-                entity.Phone,
-                entity.Address ?? "");
+      entity.Id,
+      entity.FirstName,
+      entity.LastName,
+      entity.Gender,
+      entity.IdProofType,
+      entity.IdProofNumber,
+      entity.Email,
+      entity.Phone,
+      entity.Address ?? "");
   }
 }

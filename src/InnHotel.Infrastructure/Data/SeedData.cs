@@ -5,7 +5,7 @@ using InnHotel.Core.ReservationAggregate;
 using InnHotel.Core.ServiceAggregate;
 using InnHotel.Core.AuthAggregate;
 using Microsoft.AspNetCore.Identity;
-
+using InnHotel.Core.GuestAggregate.ValueObjects;
 namespace InnHotel.Infrastructure.Data;
 
 public static class SeedData
@@ -47,13 +47,14 @@ public static class SeedData
       description: "Luxurious suite with king bed and ocean view");
 
   public static readonly Guest TestGuest = new(
-      "John",
-      "Doe",
-      "Passport",
-      "AB1234567",
-      email: "john.doe@example.com",
-      phone: "+1234567890",
-      address: "123 Main Street");
+        firstName: "John",
+        lastName:  "Doe",
+        gender:    Gender.Male,
+        idProofType: IdProofType.Passport,
+        idProofNumber: "AB1234567",
+        email:     "john.doe@example.com",
+        phone:     "+1234567890",
+        address:   "123 Main Street");
 
   public static async Task InitializeAsync(IServiceProvider serviceProvider)
   {

@@ -11,7 +11,7 @@
 |   dotnet script ./scripts/gen-update-operation.csx -- --entity Branch --plural Branches
 |
 | For detailed documentation, see:
-|   docs/dev/update-operation.md
+|   docs/dev/gen-operation-scripts.md
 |
 */
 

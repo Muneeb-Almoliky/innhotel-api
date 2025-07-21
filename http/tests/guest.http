@@ -18,15 +18,16 @@ Authorization: Bearer {{login.response.body.accessToken}}
 {
     "firstName": "Jane",
     "lastName": "Smiths",
-    "idProofType": "Passport",
-    "idProofNumber": "XY7ss890135",
+    "gender": "female",
+    "idProofType": "PASSPORT",
+    "idProofNumber": "XY7ssssd890135",
     "email": "jane.smiths@example.com",
     "phone": "+1234567891",
     "address": "456 Park Avenue"
 }
 
 ### Get Guest by ID
-GET {{baseUrl}}/api/guests/24
+GET {{baseUrl}}/api/guests/2
 Authorization: Bearer {{login.response.body.accessToken}}
 
 ### Delete Guest
@@ -65,7 +66,8 @@ Authorization: Bearer {{login.response.body.accessToken}}
 {
     "firstName": "Jane",
     "lastName": "Smith-Updated",
-    "idProofType": "Passport",
+    "gender": "female",
+    "idProofType": "PASSPORT",
     "idProofNumber": "aXY7890123",
     "email": "jane.updated@example.com",
     "phone": "+1234567891",

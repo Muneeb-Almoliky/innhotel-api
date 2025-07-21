@@ -8,7 +8,7 @@ namespace InnHotel.Web.Rooms;
 /// </summary>
 public class CreateRoomRequest
 {
-    public const string Route = "api/rooms";
+    public const string Route = "/rooms";
 
     [Required]
     public int BranchId { get; set; }

@@ -1,5 +1,5 @@
 @baseUrl = https://localhost:57679
-@cookieJar = auth
+@cookieJar = api/auth
 
 ### Login
 # @name login
@@ -30,3 +30,14 @@ Authorization: Bearer {{login.response.body.accessToken}}
     "hireDate": "2024-05-01",
     "position": "Receptionist"
 }
+
+### Logout
+# @name logout
+POST {{baseUrl}}/api/auth/logout
+Cookie: {{cookieJar}}
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Test Refresh After Logout (should fail)
+# @name refreshAfterLogout
+POST {{baseUrl}}/api/auth/refresh
+Cookie: {{cookieJar}}

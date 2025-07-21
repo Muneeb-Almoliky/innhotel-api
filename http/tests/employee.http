@@ -1,0 +1,71 @@
+@baseUrl = https://localhost:57679
+
+### Login first to get token
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "super@innhotel.com",
+    "password": "Sup3rP@ssword!"
+}
+
+### Create Employee
+POST {{baseUrl}}/api/employees
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+    "firstName": "John",
+    "lastName": "Doe",
+    "branchId": 1,
+    "hireDate": "2024-03-01",
+    "position": "Hotel Manager",
+    "userId": null
+}
+
+### Get Employee by ID
+GET {{baseUrl}}/api/employees/1
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Delete Employee
+DELETE {{baseUrl}}/api/employees/1
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get All Employees (Default Pagination: page 1, size 10)
+GET {{baseUrl}}/api/employees
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get Employees - Page 1 with 5 items
+GET {{baseUrl}}/api/employees?pageNumber=1&pageSize=5
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get Employees - Page 2 with 5 items
+GET {{baseUrl}}/api/employees?pageNumber=2&pageSize=5
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get Employees - With maximum page size (50)
+GET {{baseUrl}}/api/employees?pageSize=50
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get Employees - Test invalid page size (should default to 50)
+GET {{baseUrl}}/api/employees?pageSize=100
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Get Employees - Test invalid page number (should default to 1)
+GET {{baseUrl}}/api/employees?pageNumber=0
+Authorization: Bearer {{login.response.body.accessToken}}
+
+### Update Employee
+PUT {{baseUrl}}/api/employees/2
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.accessToken}}
+
+{
+    "firstName": "John",
+    "lastName": "Doe-Updated",
+    "branchId": 1,
+    "hireDate": "2024-03-01",
+    "position": "Senior Hotel Manager",
+    "userId": null
+} 

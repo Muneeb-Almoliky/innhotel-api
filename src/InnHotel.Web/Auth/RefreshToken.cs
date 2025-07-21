@@ -47,8 +47,7 @@ public class RefreshToken(IMediator _mediator, IConfiguration config)
 
     if (!result.IsSuccess)
     {
-      // Clear invalid cookie
-      HttpContext.Response.Cookies.Delete("refreshToken");
+      CookieHelpers.ClearRefreshCookie(HttpContext.Response);
       await SendResultAsync(result.ToMinimalApiResult());
       return;
     }

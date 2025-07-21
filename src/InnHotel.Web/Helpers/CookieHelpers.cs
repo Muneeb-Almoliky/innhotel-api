@@ -2,19 +2,28 @@
 
 public static class CookieHelpers
 {
-  public static void SetRefreshCookie(
-      HttpResponse response,
-      string token,
-      int expiryDays)
+  public static CookieOptions GetRefreshCookieOpts(int expiryDays)
   {
-    response.Cookies.Delete("refreshToken");
-    response.Cookies.Append("refreshToken", token, new CookieOptions
+    return new CookieOptions
     {
       HttpOnly = true,
       Secure = true,
       SameSite = SameSiteMode.None,
       Expires = DateTime.UtcNow.AddDays(expiryDays),
-      Path = "/api/auth"
-    });
+      Path = "/"
+    };
+  }
+
+  public static void SetRefreshCookie(
+      HttpResponse response,
+      string token,
+      int expiryDays)
+  {
+    response.Cookies.Append("refreshToken", token, GetRefreshCookieOpts(expiryDays));
+  }
+
+  public static void ClearRefreshCookie(HttpResponse response)
+  {
+    response.Cookies.Delete("refreshToken", GetRefreshCookieOpts(0));
   }
 }

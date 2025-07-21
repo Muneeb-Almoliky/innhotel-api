@@ -214,7 +214,8 @@ namespace InnHotel.Infrastructure.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("address");
 
                     b.Property<string>("Email")
@@ -228,6 +229,13 @@ namespace InnHotel.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("first_name");
 
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Male")
+                        .HasColumnName("gender");
+
                     b.Property<string>("IdProofNumber")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -236,8 +244,7 @@ namespace InnHotel.Infrastructure.Data.Migrations
 
                     b.Property<string>("IdProofType")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("text")
                         .HasColumnName("id_proof_type");
 
                     b.Property<string>("LastName")
